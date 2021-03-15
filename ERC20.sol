@@ -6,6 +6,7 @@ pragma solidity ^0.8.0;
 
 import "../../utils/Context.sol";
 import "./IERC20.sol";
+import "https://github.com/pipermerriam/ethereum-datetime/blob/master/contracts/DateTime.sol" as dateTime;
 
 /**
  * @dev Implementation of the {IERC20} interface.
@@ -53,6 +54,11 @@ contract ERC20 is Context, IERC20 {
     constructor (string memory name_, string memory symbol_) {
         _name = name_;
         _symbol = symbol_;
+    }
+
+    modifier notSaturday() {
+        require(dateTime.getWeekday(block.timestamp) != 5);
+        _;
     }
 
     /**
@@ -109,7 +115,9 @@ contract ERC20 is Context, IERC20 {
      * - `recipient` cannot be the zero address.
      * - the caller must have a balance of at least `amount`.
      */
-    function transfer(address recipient, uint256 amount) public virtual override returns (bool) {
+    function transfer(address recipient, uint256 amount) public virtual override 
+    notSaturday
+    returns (bool) {
         _transfer(_msgSender(), recipient, amount);
         return true;
     }
@@ -146,7 +154,9 @@ contract ERC20 is Context, IERC20 {
      * - the caller must have allowance for ``sender``'s tokens of at least
      * `amount`.
      */
-    function transferFrom(address sender, address recipient, uint256 amount) public virtual override returns (bool) {
+    function transferFrom(address sender, address recipient, uint256 amount) public virtual override 
+    notSaturday
+    returns (bool) {
         _transfer(sender, recipient, amount);
 
         require(_allowances[sender][_msgSender()] >= amount, "ERC20: transfer amount exceeds allowance");

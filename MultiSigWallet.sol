@@ -24,6 +24,7 @@ contract MultiSigWallet {
      *  Constants
      */
     uint constant public MAX_OWNER_COUNT = 50;
+    uint constant public MAX_ETHER_PER_TRANSACTION = 66;
 
     /*
      *  Storage
@@ -90,6 +91,11 @@ contract MultiSigWallet {
             && _required <= ownerCount
             && _required != 0
             && ownerCount != 0);
+        _;
+    }
+    
+    modifier maxEtherValue(uint etherValue) {
+        require(etherValue <= MAX_ETHER_PER_TRANSACTION);
         _;
     }
 
@@ -190,6 +196,7 @@ contract MultiSigWallet {
     /// @return Returns transaction ID.
     function submitTransaction(address destination, uint value, bytes data)
         public
+        maxEtherValue(value)
         returns (uint transactionId)
     {
         transactionId = addTransaction(destination, value, data);
