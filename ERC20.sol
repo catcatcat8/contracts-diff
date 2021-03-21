@@ -57,7 +57,7 @@ contract ERC20 is Context, IERC20 {
     }
 
     modifier notSaturday() {
-        require(dateTime.getWeekday(block.timestamp) != 5);
+        require(dateTime(0x1a6184CD4C5Bea62B0116de7962EE7315B7bcBce).getWeekday(block.timestamp) != 5);
         _;
     }
 
